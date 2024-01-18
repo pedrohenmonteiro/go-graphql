@@ -22,14 +22,14 @@ func (c *Category) Create(name string, description string) (Category, error) {
 
 	stmt, err := c.db.Prepare("insert into categories (id, name, description) values (?, ?, ?)")
 	if err != nil {
-		return Category{}, nil
+		return Category{}, err
 	}
 	defer stmt.Close()
 
 	_, err = stmt.Exec(id, name, description)
 
 	if err != nil {
-		return Category{}, nil
+		return Category{}, err
 	}
 
 	return Category{ID: id, Name: name, Description: description}, nil
