@@ -20,7 +20,7 @@ func NewCategory(db *sql.DB) *Category {
 func (c *Category) Create(name string, description string) (Category, error) {
 	id := uuid.New().String()
 
-	stmt, err := c.db.Prepare("insert into categories (id, name, description) values (?, ?, ?, ?)")
+	stmt, err := c.db.Prepare("insert into categories (id, name, description) values (?, ?, ?)")
 	if err != nil {
 		return Category{}, nil
 	}
@@ -34,4 +34,25 @@ func (c *Category) Create(name string, description string) (Category, error) {
 
 	return Category{ID: id, Name: name, Description: description}, nil
 
+}
+
+func (c *Category) FindAll() ([]Category, error) {
+
+	rows, err := c.db.Query("select * from categories")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []Category
+
+	for rows.Next() {
+		var category Category
+		err = rows.Scan(&category.ID, &category.Name, &category.Description)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, category)
+	}
+	return categories, nil
 }
